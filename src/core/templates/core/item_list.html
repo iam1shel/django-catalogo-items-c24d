@@ -13,35 +13,69 @@
     >
 
     <div id="itemList">
-
-        {% for item in items %}
-            <div class="item">
-                <strong>{{ item.name }}</strong>
-                <p>{{ item.description }}</p>
-            </div>
-        {% endfor %}
-
     </div>
 
 </div>
 
 <script>
+
     const searchInput = document.getElementById("searchInput");
-    const items = document.querySelectorAll(".item");
+    const itemList = document.getElementById("itemList");
 
-    searchInput.addEventListener("keyup", function () {
-        const searchText = searchInput.value.toLowerCase();
+    fetch("/api/items/")
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
 
-        items.forEach(function (item) {
-            const itemText = item.textContent.toLowerCase();
+            itemList.innerHTML = "";
 
-            if (itemText.includes(searchText)) {
-                item.style.display = "block";
+            data.forEach(function(item) {
+
+                const div = document.createElement("div");
+                div.classList.add("item");
+
+                const nombre = document.createElement("strong");
+                nombre.textContent = item.name;
+
+                const descripcion = document.createElement("p");
+                descripcion.textContent = item.description;
+
+                div.appendChild(nombre);
+                div.appendChild(descripcion);
+
+                itemList.appendChild(div);
+            });
+
+        })
+        .catch(function(error) {
+            console.error("Error al obtener los items:", error);
+        });
+
+
+    searchInput.addEventListener("input", function() {
+
+        const searchText = searchInput.value.toLowerCase().trim();
+
+        const items = document.querySelectorAll(".item");
+
+        items.forEach(function(item) {
+
+            const itemName = item
+                .querySelector("strong")
+                .textContent
+                .toLowerCase();
+
+            if (itemName.includes(searchText)) {
+                item.style.display = "";
             } else {
                 item.style.display = "none";
             }
+
         });
+
     });
+
 </script>
 
 {% endblock %}
