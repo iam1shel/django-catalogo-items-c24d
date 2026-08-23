@@ -1,20 +1,47 @@
-{% extends 'base.html' %}
-
-{% block title %}Lista de Items{% endblock %}
+{% extends "base.html" %}
 
 {% block content %}
+
+<div class="container">
+
     <h1>Lista de Items</h1>
 
-    <ul>
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="Buscar un item..."
+    >
+
+    <div id="itemList">
+
         {% for item in items %}
-            <li>
+            <div class="item">
                 <strong>{{ item.name }}</strong>
-                {% if item.description %}
-                    - {{ item.description }}
-                {% endif %}
-            </li>
-        {% empty %}
-            <li>No hay items registrados.</li>
+                <p>{{ item.description }}</p>
+            </div>
         {% endfor %}
-    </ul>
+
+    </div>
+
+</div>
+
+<script>
+    const searchInput = document.getElementById("searchInput");
+    const items = document.querySelectorAll(".item");
+
+    searchInput.addEventListener("keyup", function () {
+        const searchText = searchInput.value.toLowerCase();
+
+        items.forEach(function (item) {
+            const itemText = item.textContent.toLowerCase();
+
+            if (itemText.includes(searchText)) {
+                item.style.display = "block";
+            } else {
+                item.style.display = "none";
+            }
+        });
+    });
+</script>
+
 {% endblock %}
